@@ -18,7 +18,9 @@ public class WebServer
 		System.out.println("Filename: " + filename);
 		
 		try {
-			PrintStream output = new PrintStream(socket.getOutputStream());
+			OutputStream clientStream = socket.getOutputStream();
+			Files.copy(filename, clientStream);
+			clientStream.flush();
 		} catch(IOException e) {
 			System.out.println(e.getMessage());
 		}
