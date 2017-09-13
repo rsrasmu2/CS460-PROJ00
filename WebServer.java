@@ -22,7 +22,8 @@ public class WebServer
 			Files.copy(filename, clientStream);
 			clientStream.flush();
 		} catch(IOException e) {
-			System.out.println(e.getMessage());
+			PrintStream p = new PrintStream(socked.getOutputStream());
+			p.println("Error: 400");
 		}
 		
 		scanner.close();
