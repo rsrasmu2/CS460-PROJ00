@@ -27,7 +27,7 @@ public class WebServer
             String http_filename = split_request[1].substring(1);
             String http_version = split_request[2];
 //            System.out.println("HTTP GET: " + http_GET);
-            
+
             if(http_GET.equals("GET")) {
             	System.out.println("Filename: " + http_filename);
             	  File file = new File(http_filename);
@@ -56,6 +56,7 @@ public class WebServer
 	              out.close();
 	              file_in.close();
             	  }
+<<<<<<< HEAD
             	  else out.print("Error: 404 - File not found"); //send back to client
             }
             else out.print("Error: 400 - Invalid request"); //send back to client
