@@ -56,7 +56,6 @@ public class WebServer
 	              out.close();
 	              file_in.close();
             	  }
-<<<<<<< HEAD
             	  else out.print("Error: 404 - File not found"); //send back to client
             }
             else out.print("Error: 400 - Invalid request"); //send back to client
