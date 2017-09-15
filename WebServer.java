@@ -24,11 +24,11 @@ public class WebServer
                 Files.copy(filename, clientStream);
                 clientStream.flush();
             } catch (IOException e) {
-                PrintStream p = new PrintStream(socked.getOutputStream());
+                PrintStream p = new PrintStream(socket.getOutputStream());
                 p.println("Error: 400");
             }catch(Exception e)
             {
-            	PrintStream p = new PrintStream(socked.getOutputStream());
+            	PrintStream p = new PrintStream(socket.getOutputStream());
                 p.println("Error: 404");
             }
 
