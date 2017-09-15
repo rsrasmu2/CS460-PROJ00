@@ -12,15 +12,25 @@ public class Client{
     String http_GET = split_request[0];
     String http_filename = split_request[1].substring(1);
     String http_version = split_request[2];
-    PrintStream p = new PrintStream(s.getOutputStream());
+    PrintWriter out =
+        new PrintWriter(s.getOutputStream(), true);
+    BufferedReader in =
+        new BufferedReader(
+            new InputStreamReader(s.getInputStream()));
+//    BufferedReader stdIn =
+//        new BufferedReader(
+//            new InputStreamReader(System.in));
+//    PrintStream p = new PrintStream(s.getOutputStream());
     
-    p.println(http_request);
+    out.println(http_request);
 
     File file = new File(http_filename);
 
-    InputStream in = s.getInputStream();
-    OutputStream out = new FileOutputStream(file);
-
+//    InputStream in = s.getInputStream();
+//    OutputStream out = new FileOutputStream(file);
+    
+//    BufferedReader in_2=new BufferedReader(new InputStreamReader(s.getInputStream()));
+    System.out.println(in.readLine());
     byte[] buffer = new byte[8192];
 
     int count;
@@ -28,8 +38,8 @@ public class Client{
       out.write(buffer, 0, count);
     }
 
-    out.close();
-    in.close();
+//    out.close();
+//    in.close();
     s.close();
   }
 }

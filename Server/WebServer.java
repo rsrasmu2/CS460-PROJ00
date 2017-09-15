@@ -11,8 +11,12 @@ public class WebServer
 		ServerSocket serverSocket = new ServerSocket(8080);
 		while (true) {
             Socket socket = serverSocket.accept();
-            BufferedReader in=new BufferedReader(new InputStreamReader(socket.getInputStream()));
-//            PrintStream out=new PrintStream(new BufferedOutputStream(socket.getOutputStream()));
+            PrintWriter out =
+                    new PrintWriter(socket.getOutputStream(), true);                   
+            BufferedReader in = new BufferedReader(
+                    new InputStreamReader(socket.getInputStream()));
+//            BufferedReader in=new BufferedReader(new InputStreamReader(socket.getInputStream()));
+//            PrintStream out_2=new PrintStream(new BufferedOutputStream(socket.getOutputStream()));
 //            Scanner scanner = new Scanner(socket.getInputStream());
 //            String http_request = scanner.nextLine();
 //            System.out.println("HTTP Request: " + http_request);
@@ -23,28 +27,27 @@ public class WebServer
             String http_filename = split_request[1].substring(1);
             String http_version = split_request[2];
 //            System.out.println("HTTP GET: " + http_GET);
+            
             if(http_GET.equals("GET")) {
             	System.out.println("Filename: " + http_filename);
             	  File file = new File(http_filename);
             	  if(file.exists()) {
 	              long length = file.length();
 	              if (length > Integer.MAX_VALUE) {
-	                  System.out.println("File is too large");
+	                  out.print("File is too large");
 	              }
 	              System.out.println("Length: " + length);
+	              InputStream data_in = new FileInputStream(file);
+	              BufferedReader file_in = null;
+//	              OutputStream out = null;
 	  
-	              InputStream file_in = null;
-	              OutputStream out = null;
-	  
-	              try {
-	                  file_in = new FileInputStream(file);
-	              } catch (IOException e) {
-	                  System.out.println("Could not get socket inputstream.");
-	              }
-                  out = socket.getOutputStream();
-	  
+	                  file_in = new BufferedReader(new InputStreamReader(data_in));
+//                  out = socket.getOutputStream();
+                  
+                  out.print("HTTP/1.0 200 OK\r\n");
+                  
 	              int count;
-	              byte[] buffer = new byte[8192];
+	              char[] buffer = new char[8192];
 	              while ((count = file_in.read(buffer)) > 0) {
 	            	  System.out.println("Count: " + count);
 	                  out.write(buffer, 0, count);
@@ -53,9 +56,9 @@ public class WebServer
 	              out.close();
 	              file_in.close();
             	  }
-            	  else System.out.println("Error: 404 - File not found"); //send back to client
+            	  else out.print("Error: 404 - File not found"); //send back to client
             }
-            else System.out.println("Error: 400 - Invalid request"); //send back to client
+            else out.print("Error: 400 - Invalid request"); //send back to client
 
 //            File file = new File(http_request);
 //            long length = file.length();
