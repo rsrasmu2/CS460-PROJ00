@@ -3,90 +3,86 @@ import java.util.Scanner;
 import java.io.*;
 import java.net.ServerSocket;
 import java.nio.file.Files;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
+import java.text.SimpleDateFormat;
+
 
 public class WebServer
 {
 	public static void main(String args[]) throws IOException
 	{
-		ServerSocket serverSocket = new ServerSocket(8080);
-		while (true) {
+		int port = 8080;
+		ServerSocket serverSocket = new ServerSocket(port);
+
+		while (true) 
+        {
             Socket socket = serverSocket.accept();
-            BufferedReader in=new BufferedReader(new InputStreamReader(socket.getInputStream()));
-//            PrintStream out=new PrintStream(new BufferedOutputStream(socket.getOutputStream()));
-//            Scanner scanner = new Scanner(socket.getInputStream());
-//            String http_request = scanner.nextLine();
-//            System.out.println("HTTP Request: " + http_request);
+            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);                   
+            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+
             String http_request = in.readLine();
-            System.out.println("HTTP Request: " + http_request);
+            System.out.println(http_request + "\r\n" +
+                               "Host: localhost\r\n" +
+                               "Connection: close\r\n" +
+                               "User-agent: Telnet\r\n" + 
+                               "Accept-language: en\r\n");
+
             String[] split_request = http_request.split(" ");
             String http_GET = split_request[0];
-            String http_filename = split_request[1].substring(1);
+            String http_filename = split_request[1];
             String http_version = split_request[2];
-//            System.out.println("HTTP GET: " + http_GET);
-            if(http_GET.equals("GET")) {
-            	System.out.println("Filename: " + http_filename);
-            	  File file = new File(http_filename);
-            	  if(file.exists()) {
-	              long length = file.length();
-	              if (length > Integer.MAX_VALUE) {
-	                  System.out.println("File is too large");
-	              }
-	              System.out.println("Length: " + length);
-	  
-	              InputStream file_in = null;
-	              OutputStream out = null;
-	  
-	              try {
-	                  file_in = new FileInputStream(file);
-	              } catch (IOException e) {
-	                  System.out.println("Could not get socket inputstream.");
-	              }
-                  out = socket.getOutputStream();
-	  
-	              int count;
-	              byte[] buffer = new byte[8192];
-	              while ((count = file_in.read(buffer)) > 0) {
-	            	  System.out.println("Count: " + count);
-	                  out.write(buffer, 0, count);
-	              }
-	
-	              out.close();
-	              file_in.close();
-            	  }
-            	  else System.out.println("Error: 404 - File not found"); //send back to client
+            
+
+            if(http_filename.substring(0,1).equals("/")) 
+            {
+                http_filename = http_filename.substring(1);
             }
-            else System.out.println("Error: 400 - Invalid request"); //send back to client
 
-//            File file = new File(http_request);
-//            long length = file.length();
-//            if (length > Integer.MAX_VALUE) {
-//                System.out.println("File is too large");
-//            }
-//
-//            InputStream in = null;
-//            OutputStream out = null;
-//
-//            try {
-//                in = new FileInputStream(file);
-//            } catch (IOException e) {
-//                System.out.println("Could not get socket inputstream.");
-//            }
-//            try {
-//                out = socket.getOutputStream();
-//            } catch (FileNotFoundException e) {
-//                PrintStream p = new PrintStream(socket.getOutputStream());
-//                p.println("Error: 400 - File does not exist.");
-//            }
-//
-//            int count;
-//            byte[] buffer = new byte[8192];
-//            while ((count = in.read(buffer)) > 0) {
-//                out.write(buffer, 0, count);
-//            }
+            if(http_GET.equals("GET") && (http_version.equals("HTTP/1.0") || http_version.equals("HTTP/1.1"))) 
+            {
+            	File file = new File(http_filename);
+            	if(file.exists())
+                {
+	                long length = file.length();
+	                if (length > Integer.MAX_VALUE) 
+                    {
+                        out.print("File is too large");
+	                }
+	                BufferedReader file_in = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
 
-//            out.close();
-//            in.close();
-//            scanner.close();
+                    Date date = new Date(file.lastModified());
+                    Date date1 = new Date(System.currentTimeMillis());
+                    SimpleDateFormat sdf = new SimpleDateFormat("EEEE, MMMM d,yyyy h:mm a", Locale.ENGLISH);
+                    sdf.setTimeZone(TimeZone.getTimeZone("MST"));
+                    String formattedDate = sdf.format(date1);
+                    String formattedDate1 = sdf.format(date);
+                    
+
+
+                    out.print("\r\n" + http_version + " 200 OK\r\n"+
+                              "Connection: keep-alive\r\n" +
+                              "Date: " + formattedDate1 + "\r\n" +
+                              "Server: localhost \r\n" +
+                              "Last-Modified: " + formattedDate + "\r\n" +
+                              "Content-Length: " + length * 2 + "\r\n" +
+                              "Content-Type: text/html\r\n\r\n");
+                     
+	                int count;
+	                char[] buffer = new char[8192];
+	                while ((count = file_in.read(buffer)) > 0) 
+                    {
+	                    out.write(buffer, 0, count);
+	                }
+	                file_in.close();
+                }
+            	else out.print("Error: 404 - File not found\r\n");
+
+            }
+            else out.print("Error: 400 - Bad request\r\n");
+            out.close();
         }
-	}
+    }
+
 }
