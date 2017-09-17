@@ -1,8 +1,10 @@
 Welcome to the README, follow the steps below to compile, run, and test our code.
+
 1.Type "make" into command line when in the project directory.
-2.Type "java Webserver" to run the class that was created by the makefile.
+2.Type "java WebServer" to run the class that was created by the makefile.
 3.In a seperate command line type "telnet localhost 8080" in order to test the server.
 4.When prompted type "GET hello.txt HTTP/1.1" or "GET /hello.txt HTTP/1.1" or HTTP/1.0 and the server will respond to the request.
+
 We used telnet to test our server so we figured we'd add that to the readme so you know exactly how we got ours working.
 We also added a sample text file that we were using to test(hello.txt) as well but you can also add your own test file.
 
