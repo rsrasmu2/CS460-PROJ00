@@ -1,0 +1,8 @@
+Welcome to the README, follow the steps below to compile, run, and test our code.
+
+1.Type "make" into command line when in the project directory.
+2.Type "java ClientPinger <IP address> 12000" to run the file and where the computer's IP address is entered in <IP address>.
+3.In a seperate command line run the corresponding
+
+Created by:
+Chandler Hayes, Alex Kahn, Robert Rasmussen, Josh Shaffer, and Summer Stapleton.
