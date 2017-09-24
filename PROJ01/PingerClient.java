@@ -9,24 +9,29 @@ import java.lang.Thread;
 import java.lang.IllegalArgumentException;
 
 /*
-* Authors: Chandler Hayes, Alex Kahn, Robert Rasmussen, Josh Shaffer, and Summer Stapleton
+* Authors: Dillan Mills Chandler Hayes, Alex Kahn, Robert Rasmussen, 
+* Josh Shaffer, and Summer Stapleton
 *
 * This sends 10 pings to a corresponding server and reports the RTTs of each
 * individual ping. It also reports the maximum and minimum RTT of the set of
 * pings sent, and the average RTT of the set of pings sent.
 * */
 
-public class PingerClient {
-    public static void main(String args[]) {
+public class PingerClient 
+{
+    public static void main(String args[]) 
+    {
         DatagramSocket socket;  //creates a UDP socket
         InetAddress address;
+        
         byte[] buf;     //stores the message for the packet
         int timeout = 1000;     //it's in milliseconds, which is equal to 1 second
         long startTime;     //time when packet is sent to server, in nanoseconds
         long endTime;   //time when server sends a packet back, in nanoseconds
         double RTT;     //Round Trip Time
 
-        try{
+        try
+        {
             //Holds the round trip time of every packet that was successfully sent back
             ArrayList<Double> RTTList = new ArrayList<Double>();
 
@@ -40,7 +45,8 @@ public class PingerClient {
             address = InetAddress.getByName(host);  //gets the ip address of the server
 
             //this loop will send a ping to the server for every iteration
-            for(int i = 0; i < 10; i++) {
+            for(int i = 0; i < 10; i++) 
+            {
                 //below is getting the date & time as a string to store in the packet that will be sent to the server
                 Date date = new Date(System.currentTimeMillis());   //current date & time
                 SimpleDateFormat sdf = new SimpleDateFormat("EE MMM d hh:mm:ss yyyy", Locale.ENGLISH);  //setting format
@@ -57,7 +63,8 @@ public class PingerClient {
                 packet = new DatagramPacket(buf, buf.length);   //packet now represents server's packet
 
                 //receiving packet from server
-                try {
+                try 
+                {
                     socket.receive(packet);     //receive packet
                     endTime = System.nanoTime();    //time we received the packet at
                     RTT = (endTime - startTime) / 1000000000.0;    //calculating RTT
@@ -72,7 +79,8 @@ public class PingerClient {
                     System.out.println();
                     Thread.sleep(1000);     //wait 1 second before sending another ping
                 }
-                catch (SocketTimeoutException e) {
+                catch (SocketTimeoutException e) 
+                {
                     System.out.println("Request timed out.");
                 }
                 catch(ArrayIndexOutOfBoundsException e)
@@ -88,7 +96,8 @@ public class PingerClient {
             double avg = 0;
 
             //going through the list to calculate the min, max, and sum of all the RTT's
-            for(double d : RTTList) {
+            for(double d : RTTList) 
+            {
                 if(d < min) min = d;
                 if(d > max) max = d;
                 avg += d;   //summing all the RTT's so we can find the average
@@ -104,11 +113,13 @@ public class PingerClient {
             socket.close(); //closing socket
         }
         //catches exceptions thrown for missing command line arguments
-        catch(ArrayIndexOutOfBoundsException e) {
+        catch(ArrayIndexOutOfBoundsException e) 
+        {
             System.out.println("Need two arguments.");
         }
         //catches all other exceptions
-        catch (Exception e){
+        catch (Exception e)
+        {
             System.out.println(e.getMessage());
         }
     }
